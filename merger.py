@@ -15,7 +15,7 @@ def parse_filename(filename):
             pass
     return float('inf'), float('inf'), 'unknown'
 
-def main(input_dir, output_file, sort_by_type=True):
+def main(input_dir, output_file, sort_by_type=False):
     input_path = Path(input_dir)
     md_files = sorted([f for f in input_path.iterdir() if f.suffix.lower() == '.md'])
     
@@ -60,20 +60,19 @@ def main(input_dir, output_file, sort_by_type=True):
     
     # Merge content
     with open(output_file, 'w', encoding='utf-8') as outfile:
-        outfile.write(f"# Merged Content from {input_dir}\n\n")
+        # No header or source comments, only recognized text
         
         for item in files_metadata:
             try:
                 with open(item['path'], 'r', encoding='utf-8') as infile:
                     content = infile.read().strip()
                     
-                outfile.write(f"<!-- Source: {item['path'].name} ({item['type']}) -->\n")
-                outfile.write(content)
-                outfile.write("\n\n")
+                if content:
+                    outfile.write(content)
+                    outfile.write("\n\n")
                 
             except Exception as e:
                 print(f"Error reading {item['path']}: {e}")
-                outfile.write(f"<!-- Error reading {item['path'].name} -->\n\n")
 
     print(f"Merged {len(files_metadata)} files into {output_file}")
 
@@ -81,8 +80,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Merge markdown fragments.")
     parser.add_argument("--input_dir", required=True, help="Input directory containing .md files")
     parser.add_argument("--output_file", required=True, help="Output file path")
-    parser.add_argument("--natural_order", action="store_true", help="Sort by natural reading order instead of type priority")
+    parser.add_argument("--prioritize_type", action="store_true", help="Sort by type priority instead of natural reading order")
     
     args = parser.parse_args()
     
-    main(args.input_dir, args.output_file, sort_by_type=not args.natural_order)
+    main(args.input_dir, args.output_file, sort_by_type=args.prioritize_type)

@@ -63,7 +63,11 @@ def main(input_dir, output_dir, model_id="Qwen/Qwen3-VL-32B-Instruct"): # Update
     output_path.mkdir(parents=True, exist_ok=True)
     
     extensions = {'.png', '.jpg', '.jpeg', '.bmp', '.tiff'}
-    files = sorted([f for f in input_path.iterdir() if f.suffix.lower() in extensions])
+    # Natural sort to ensure temporal order matches reading order (page 1 -> 2 ... -> 10)
+    files = sorted(
+        [f for f in input_path.iterdir() if f.suffix.lower() in extensions],
+        key=lambda f: (int(f.stem.split('_')[1]), int(f.stem.split('_')[2])) if len(f.stem.split('_')) >= 3 and f.stem.split('_')[1].isdigit() else (0,0)
+    )
     
     print(f"Starting LLM recognition on {len(files)} files in {input_dir}")
     print(f"Using model: {model_id}")

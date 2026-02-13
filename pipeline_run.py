@@ -75,8 +75,8 @@ def main(folder_name):
     )
     
     # 5. Merge (LLM Env)
-    # Output to output/[folder]/final_result.md
-    final_output = base_output_dir / "final_result.md"
+    # Output to output/[folder]/[folder].md
+    final_output = base_output_dir / f"{folder_name}.md"
     run_step(
         ENV_LLM_PYTHON,
         "merger.py",

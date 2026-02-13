@@ -48,6 +48,9 @@ def main(input_dir, output_base_dir):
                 valid_types = {'title', 'text', 'figure', 'table'}
                 
                 file_crop_count = 0
+                # Sort regions by Y-coordinate (top) to ensure top-to-bottom order
+                result.sort(key=lambda x: x['bbox'][1])
+
                 for i, region in enumerate(result):
                     category = region['type']
                     if category not in valid_types:
