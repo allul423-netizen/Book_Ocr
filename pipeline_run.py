@@ -37,7 +37,7 @@ def main(folder_name):
     step1_output = base_output_dir / "step1_rotated"
     run_step(
         ENV_VISION_PYTHON, 
-        "rotate_handler.py", 
+        "src/rotate_handler.py", 
         ["--input_dir", str(base_input_dir), "--output_dir", str(step1_output)],
         "1. Image Rotation & Deskewing"
     )
@@ -47,7 +47,7 @@ def main(folder_name):
     # Note segment_handler expects output_base_dir and creates step2_crops inside it.
     run_step(
         ENV_VISION_PYTHON, 
-        "segment_handler.py", 
+        "src/segment_handler.py", 
         ["--input_dir", str(step1_output), "--output_dir", str(base_output_dir)],
         "2. Layout Analysis & Segmentation"
     )
@@ -59,7 +59,7 @@ def main(folder_name):
     step2_padded = base_output_dir / "step2_padded"
     run_step(
         ENV_LLM_PYTHON,
-        "padding_handler.py",
+        "src/padding_handler.py",
         ["--input_dir", str(step2_crops), "--output_dir", str(step2_padded)],
         "3. Image Padding (56px Constraint)"
     )
@@ -69,7 +69,7 @@ def main(folder_name):
     step3_output = base_output_dir / "step3_md_fragments"
     run_step(
         ENV_LLM_PYTHON,
-        "llm_handler.py",
+        "src/llm_handler.py",
         ["--input_dir", str(step2_padded), "--output_dir", str(step3_output)],
         "4. LLM Content Recognition"
     )
@@ -79,7 +79,7 @@ def main(folder_name):
     final_output = base_output_dir / f"{folder_name}.md"
     run_step(
         ENV_LLM_PYTHON,
-        "merger.py",
+        "src/merger.py",
         ["--input_dir", str(step3_output), "--output_file", str(final_output)],
         "5. Final Document Merging"
     )
